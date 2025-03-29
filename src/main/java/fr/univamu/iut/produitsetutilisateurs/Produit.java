@@ -4,13 +4,17 @@ public class Produit {
 
     protected int id;
     protected String nom;
-    protected float prixKilo;
+    protected float prix;
+    protected PrixCategorie prixCategorie;
     protected String typeProduit;
 
-    public Produit(int id, String nom, float prixKilo, String typeProduit) {
+    public Produit() {}
+
+    public Produit(int id, String nom, float prixKilo, PrixCategorie prixCategorie, String typeProduit) {
         this.id = id;
         this.nom = nom;
-        this.prixKilo = prixKilo;
+        this.prix = prixKilo;
+        this.prixCategorie = prixCategorie;
         this.typeProduit = typeProduit;
     }
 
@@ -30,12 +34,20 @@ public class Produit {
         this.nom = nom;
     }
 
-    public float getPrixKilo() {
-        return prixKilo;
+    public float getPrix() {
+        return prix;
     }
 
-    public void setPrixKilo(float prixKilo) {
-        this.prixKilo = prixKilo;
+    public void setPrix(float prix) {
+        this.prix = prix;
+    }
+
+    public PrixCategorie getPrixCategorie() {
+        return prixCategorie;
+    }
+
+    public void setPrixCategorie(PrixCategorie prixCategorie) {
+        this.prixCategorie = prixCategorie;
     }
 
     public String getTypeProduit() {

@@ -105,4 +105,89 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilis
         }
     }
 
+    @Override
+    public Produit getProduitById(int id) {
+        Produit selectedProduit = null;
+        String query = "SELECT * FROM Produit WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ResultSet result = ps.executeQuery();
+
+            if (result.next()) {
+                String nom = result.getString("nom");
+                float prix = result.getFloat("prix");
+                PrixCategorie prixCategorie = PrixCategorie.valueOf(result.getString("prixCategorie"));
+                String typeProduit = result.getString("typeProduit");
+
+                selectedProduit = new Produit(id, nom, prix, prixCategorie, typeProduit);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return selectedProduit;
+    }
+
+    @Override
+    public ArrayList<Produit> getAllProduits() {
+        ArrayList<Produit> produits = new ArrayList<>();
+        String query = "SELECT * FROM Produit";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ResultSet result = ps.executeQuery();
+
+            while (result.next()) {
+                int id = result.getInt("id");
+                String nom = result.getString("nom");
+                float prix = result.getFloat("prix");
+                PrixCategorie prixCategorie = PrixCategorie.valueOf(result.getString("prixCategorie"));
+                String typeProduit = result.getString("typeProduit");
+
+                Produit produit = new Produit(id, nom, prix, prixCategorie, typeProduit);
+                produits.add(produit);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return produits;
+    }
+
+    @Override
+    public boolean updateProduit(int id, String nom, float prix, PrixCategorie prixCategorie, String typeProduit) {
+        String query = "UPDATE Produit SET nom=?, prix=?, prixCategorie=?, typeProduit=? WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, nom);
+            ps.setFloat(2, prix);
+            ps.setString(3, prixCategorie.toString());
+            ps.setString(4, typeProduit);
+            ps.setInt(5, id);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean deleteProduit(int id) {
+        String query = "DELETE FROM Produit WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
