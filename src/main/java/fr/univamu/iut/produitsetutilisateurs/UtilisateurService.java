@@ -7,14 +7,14 @@ import java.util.ArrayList;
 
 public class UtilisateurService {
 
-    protected UtilisateurRepositoryInterface userRepo;
+    protected ProduitsEtUtilisateursRepositoryInterface repo;
 
-    public UtilisateurService(UtilisateurRepositoryInterface userRepo) {
-        this.userRepo = userRepo;
+    public UtilisateurService(ProduitsEtUtilisateursRepositoryInterface repo) {
+        this.repo = repo;
     }
 
     public String getAllUtilisateursJSON() {
-        ArrayList<Utilisateur> allUsers = userRepo.getAllUtilisateurs();
+        ArrayList<Utilisateur> allUsers = repo.getAllUtilisateurs();
 
         String result = "";
         try( Jsonb jsonb = JsonbBuilder.create()){

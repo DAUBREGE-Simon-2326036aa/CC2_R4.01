@@ -14,8 +14,9 @@ public class UtilisateurResource {
 
     public UtilisateurResource() {}
 
-    public @Inject UtilisateurResource(UtilisateurRepositoryInterface userRepo ){
-        this.service = new UtilisateurService(userRepo) ;
+    @Inject
+    public UtilisateurResource(ProduitsEtUtilisateursRepositoryInterface repo ){
+        this.service = new UtilisateurService(repo) ;
     }
 
     public UtilisateurResource(UtilisateurService service) {

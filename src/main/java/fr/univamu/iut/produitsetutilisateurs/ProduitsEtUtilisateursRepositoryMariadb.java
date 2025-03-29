@@ -4,7 +4,7 @@ import java.io.Closeable;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class ProduitsEtUtilisateursRepositoryMariadb implements UtilisateurRepositoryInterface, Closeable {
+public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilisateursRepositoryInterface, Closeable {
 
     protected Connection dbConnection;
 
@@ -39,10 +39,10 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements UtilisateurRepos
             while (result.next()) {
                 int id = result.getInt("id");
                 String nom = result.getString("nom");
-                String email = result.getString("email");
                 String password = result.getString("password");
+                String email = result.getString("email");
 
-                Utilisateur utilisateur = new Utilisateur(id, nom, email, password);
+                Utilisateur utilisateur = new Utilisateur(id, nom, password, email);
                 utilisateurs.add(utilisateur);
             }
 

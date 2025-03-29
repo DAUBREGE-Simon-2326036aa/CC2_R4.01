@@ -2,7 +2,7 @@ package fr.univamu.iut.produitsetutilisateurs;
 
 import java.util.ArrayList;
 
-public interface UtilisateurRepositoryInterface {
+public interface ProduitsEtUtilisateursRepositoryInterface {
 
     public void close();
 

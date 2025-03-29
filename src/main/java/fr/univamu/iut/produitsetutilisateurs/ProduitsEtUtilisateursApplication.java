@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.Application;
 public class ProduitsEtUtilisateursApplication extends Application {
 
     @Produces
-    private UtilisateurRepositoryInterface openDbConnection(){
+    public ProduitsEtUtilisateursRepositoryInterface openDbConnection(){
         ProduitsEtUtilisateursRepositoryMariadb db = null;
 
         try{
@@ -23,7 +23,7 @@ public class ProduitsEtUtilisateursApplication extends Application {
         return db;
     }
 
-    private void closeDbConnection(@Disposes UtilisateurRepositoryInterface userRepo) {
+    public void closeDbConnection(@Disposes ProduitsEtUtilisateursRepositoryInterface userRepo) {
         userRepo.close();
     }
 }
