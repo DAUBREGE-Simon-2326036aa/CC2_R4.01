@@ -25,7 +25,26 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilis
 
     @Override
     public Utilisateur getUtilisateurById(int id) {
-        return null;
+        Utilisateur selectedUtilisateur = null;
+        String query = "SELECT * FROM Utilisateur WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ResultSet result = ps.executeQuery();
+
+            if (result.next()) {
+                String nom = result.getString("nom");
+                String password = result.getString("password");
+                String email = result.getString("email");
+
+                selectedUtilisateur = new Utilisateur(id, nom, password, email);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return selectedUtilisateur;
     }
 
     @Override
@@ -55,7 +74,20 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilis
 
     @Override
     public boolean updateUtilisateur(int id, String nom, String password, String email) {
-        return false;
+        String query = "UPDATE Utilisateur SET nom=?, password=?, email=? WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, nom);
+            ps.setString(2, password);
+            ps.setString(3, email);
+            ps.setInt(4, id);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -2,9 +2,7 @@ package fr.univamu.iut.produitsetutilisateurs;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 
 @Path("/users")
 @ApplicationScoped
@@ -29,5 +27,19 @@ public class UtilisateurResource {
         return service.getAllUtilisateursJSON();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces("application/json")
+    public String getUtilisateurById(@PathParam("id") int id) {
+        return service.getUtilisateurByIdJSON(id);
+    }
+
+    @PUT
+    @Path("/{id}/update")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public boolean updateUtilisateur(@PathParam("id") int id, Utilisateur utilisateur) {
+        return service.updateUtilisateur(id, utilisateur);
+    }
 
 }

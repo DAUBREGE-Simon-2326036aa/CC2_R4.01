@@ -2,10 +2,10 @@ package fr.univamu.iut.produitsetutilisateurs;
 
 public class Produit {
 
-    private int id;
-    private String nom;
-    private float prixKilo;
-    private String typeProduit;
+    protected int id;
+    protected String nom;
+    protected float prixKilo;
+    protected String typeProduit;
 
     public Produit(int id, String nom, float prixKilo, String typeProduit) {
         this.id = id;
