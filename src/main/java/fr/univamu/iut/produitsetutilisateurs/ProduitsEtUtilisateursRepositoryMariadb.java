@@ -190,4 +190,25 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilis
         }
     }
 
+    @Override
+    public int authentification(String nom, String password) {
+        int id = -1;
+        String query = "SELECT id FROM Utilisateur WHERE nom=? AND password=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, nom);
+            ps.setString(2, password);
+            ResultSet result = ps.executeQuery();
+
+            if (result.next()) {
+                id = result.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return id;
+    }
+
 }

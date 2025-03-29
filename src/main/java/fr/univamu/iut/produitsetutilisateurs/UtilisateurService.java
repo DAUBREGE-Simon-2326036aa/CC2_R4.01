@@ -48,4 +48,18 @@ public class UtilisateurService {
     public boolean deleteUtilisateur(int id) {
         return repo.deleteUtilisateur(id);
     }
+
+    public String authentification(String nom, String password) {
+        int id = repo.authentification(nom, password);
+
+        String result = null;
+        try( Jsonb jsonb = JsonbBuilder.create()){
+            result = jsonb.toJson(id);
+        }
+        catch (Exception e){
+            System.err.println( e.getMessage() );
+        }
+
+        return result;
+    }
 }

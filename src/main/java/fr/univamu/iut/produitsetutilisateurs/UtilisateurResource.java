@@ -49,4 +49,11 @@ public class UtilisateurResource {
         return service.deleteUtilisateur(id);
     }
 
+    @POST
+    @Path("/auth")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String authentification(UtilisateurAuthRequest utilisateurAuthRequest) {
+        return service.authentification(utilisateurAuthRequest.getNom(), utilisateurAuthRequest.getPassword());
+    }
 }

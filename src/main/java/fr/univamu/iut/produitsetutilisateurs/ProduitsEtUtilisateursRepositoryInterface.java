@@ -22,4 +22,6 @@ public interface ProduitsEtUtilisateursRepositoryInterface {
 
     public boolean deleteProduit(int id);
 
+    public int authentification(String nom, String password);
+
 }
