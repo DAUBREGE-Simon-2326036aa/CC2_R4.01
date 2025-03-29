@@ -92,7 +92,17 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilis
 
     @Override
     public boolean deleteUtilisateur(int id) {
-        return false;
+        String query = "DELETE FROM Utilisateur WHERE id=?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

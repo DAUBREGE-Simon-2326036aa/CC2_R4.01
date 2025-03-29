@@ -42,4 +42,11 @@ public class UtilisateurResource {
         return service.updateUtilisateur(id, utilisateur);
     }
 
+    @DELETE
+    @Path("/{id}/delete")
+    @Produces("application/json")
+    public boolean deleteUtilisateur(@PathParam("id") int id) {
+        return service.deleteUtilisateur(id);
+    }
+
 }

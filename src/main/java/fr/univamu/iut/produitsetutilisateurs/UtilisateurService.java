@@ -44,4 +44,8 @@ public class UtilisateurService {
     public boolean updateUtilisateur(int id, Utilisateur utilisateur) {
         return repo.updateUtilisateur(id, utilisateur.getNom(), utilisateur.getPassword(), utilisateur.getEmail());
     }
+
+    public boolean deleteUtilisateur(int id) {
+        return repo.deleteUtilisateur(id);
+    }
 }
