@@ -62,4 +62,8 @@ public class UtilisateurService {
 
         return result;
     }
+
+    public boolean createUtilisateur(Utilisateur utilisateur) {
+        return repo.createUtilisateur(utilisateur.getNom(), utilisateur.getPassword(), utilisateur.getEmail());
+    }
 }

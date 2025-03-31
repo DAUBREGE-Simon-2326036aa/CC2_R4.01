@@ -211,4 +211,39 @@ public class ProduitsEtUtilisateursRepositoryMariadb implements ProduitsEtUtilis
         return id;
     }
 
+    @Override
+    public boolean createUtilisateur(String nom, String password, String email) {
+        String query = "INSERT INTO Utilisateur (nom, password, email) VALUES (?, ?, ?)";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, nom);
+            ps.setString(2, password);
+            ps.setString(3, email);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean createProduit(String nom, float prix, PrixCategorie prixCategorie, String typeProduit) {
+        String query = "INSERT INTO Produit (nom, prix, prixCategorie, typeProduit) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, nom);
+            ps.setFloat(2, prix);
+            ps.setString(3, prixCategorie.toString());
+            ps.setString(4, typeProduit);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -56,4 +56,13 @@ public class UtilisateurResource {
     public String authentification(UtilisateurAuthRequest utilisateurAuthRequest) {
         return service.authentification(utilisateurAuthRequest.getNom(), utilisateurAuthRequest.getPassword());
     }
+
+    @POST
+    @Path("/create")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public boolean createUtilisateur(Utilisateur utilisateur) {
+        return service.createUtilisateur(utilisateur);
+    }
+
 }

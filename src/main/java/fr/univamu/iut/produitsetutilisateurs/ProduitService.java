@@ -48,4 +48,8 @@ public class ProduitService {
     public boolean deleteProduit(int id) {
         return repo.deleteProduit(id);
     }
+
+    public boolean createProduit(String nom, float prix, PrixCategorie prixCategorie, String typeProduit) {
+        return repo.createProduit(nom, prix, prixCategorie, typeProduit);
+    }
 }

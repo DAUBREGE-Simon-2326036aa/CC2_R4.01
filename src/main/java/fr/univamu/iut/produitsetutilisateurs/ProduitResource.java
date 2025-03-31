@@ -45,4 +45,12 @@ public class ProduitResource {
         return service.deleteProduit(id);
     }
 
+    @POST
+    @Path("/create")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public boolean createProduit(Produit produit) {
+        return service.createProduit(produit.getNom(), produit.getPrix(), produit.getPrixCategorie(), produit.getTypeProduit());
+    }
+
 }
