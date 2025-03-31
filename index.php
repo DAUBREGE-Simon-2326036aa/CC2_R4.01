@@ -12,36 +12,33 @@ include_once 'service/UserChecking.php';
 include_once 'service/UserCreation.php';
 
 include_once 'gui/Layout.php';
-include_once 'gui/ViewLogin.php';
 include_once 'gui/ViewAnnonces.php';
-include_once 'gui/ViewPost.php';
 include_once 'gui/ViewError.php';
 include_once 'gui/ViewCreate.php';
 include_once 'gui/ViewAccueil.php';
+include_once 'gui/ViewPanier.php';
 
-use gui\{ViewAccueil, ViewLogin, ViewAnnonces, ViewPost, ViewError, ViewCreate, Layout};
+use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier};
 use control\{Controllers, Presenter};
 use data\{AnnonceSqlAccess, UserSqlAccess};
 use service\{AnnoncesChecking, UserChecking, UserCreation};
-
 
 // initialisation du controller
 $controller = new Controllers();
 
 // intialisation du cas d'utilisation service\AnnoncesChecking
-$annoncesCheck = new AnnoncesChecking() ;
+$annoncesCheck = new AnnoncesChecking();
 
 // intialisation du cas d'utilisation service\UserChecking
-$userCheck = new UserChecking() ;
+$userCheck = new UserChecking();
 
 // intialisation du cas d'utilisation service\UserCreation
-$userCreation = new UserCreation() ;
+$userCreation = new UserCreation();
 
 // intialisation du presenter avec accès aux données de AnnoncesCheking
 $presenter = new Presenter($annoncesCheck);
 
 // chemin de l'URL demandée au navigateur
-// (p.ex. /index.php)
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // définition d'une session d'une heure
@@ -49,73 +46,85 @@ ini_set('session.gc_maxlifetime', 3600);
 session_set_cookie_params(3600);
 session_start();
 
-// Authentification et création du compte (sauf pour le formulaire de connexion et de création de compte)
-if ( '/' != $uri and '/index.php' != $uri and '/index.php/logout' != $uri  and '/index.php/create' != $uri){
-
-    $error = $controller->authenticateAction($userCreation, $userCheck, $dataUsers);
-
-    if( $error != null )
-    {
-        $uri='/index.php/error' ;
-        if( $error == 'bad login or pwd' or $error == 'not connected')
-            $redirect = '/index.php';
-
-        if( $error == 'creation impossible')
-            $redirect = '/index.php/create';
-    }
-}
-
 // route la requête en interne
-// i.e. lance le bon contrôleur en fonction de la requête effectuée
-if ( '/' == $uri || '/index.php' == $uri || '/index.php/logout' == $uri) {
-    // affichage de la page de connexion
+if ('/' == $uri || '/index.php' == $uri || '/index.php/logout' == $uri) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nom = $_POST['nom'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-    session_destroy();
-    $layout = new Layout("gui/layout.html" );
-    $vueAccueil = new ViewAccueil( $layout );
+        // Prepare API request
+        $data = json_encode([
+            'nom' => $nom,
+            'password' => $password
+        ]);
 
+        $ch = curl_init('http://localhost:8080/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/users/auth');
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data)
+            ]
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200) {
+            $result = json_decode($response, true);
+            $result = intval($result);
+            if($result === -1){
+                exit('Mauvais login ou mot de passe');
+            }
+            $_SESSION['login'] = $result;
+        }
+    }
+
+    $layout = new Layout("gui/layout.html");
+    $vueAccueil = new ViewAccueil($layout);
     $vueAccueil->display();
 }
-elseif ( '/index.php/create' == $uri ) {
-    // Affichage du fromulaire de création de compte
+elseif ('/index.php/create' == $uri) {
+    var_dump($_POST);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $userData = [
+            'nom' => $_POST['firstName'],
+            'email' => $_POST['email'],
+            'password' => $_POST['password']
+        ];
 
-    $layout = new Layout("gui/layout.html" );
-    $vueCreate = new ViewCreate( $layout );
+        // Appel de l'API
+        $apiUrl = 'http://localhost:8080/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/users/create';
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($userData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        header('Location: /index.php');
+
+    }
+
+
+    // Affichage du formulaire de création de compte
+    $layout = new Layout("gui/layout.html");
+    $vueCreate = new ViewCreate($layout);
     $vueCreate->display();
 }
-elseif ( '/index.php/annonces' == $uri ){
-    // affichage de toutes les annonces
-
-    $controller->annoncesAction($dataAnnonces, $annoncesCheck);
-
-    $layout = new Layout("gui/layout.html" );
-    $vueAnnonces= new ViewAnnonces( $layout,  $_SESSION['login'], $presenter);
-
-    $vueAnnonces->display();
-}
-elseif ( '/index.php/post' == $uri
-            && isset($_GET['id'])) {
-    // Affichage d'une annonce
-
-    $controller->postAction($_GET['id'], $dataAnnonces, $annoncesCheck);
-
-    $layout = new Layout("gui/layout.html" );
-    $vuePost= new ViewPost( $layout,  $_SESSION['login'], $presenter );
-
-    $vuePost->display();
-}
-elseif ( '/index.php/error' == $uri ){
-    // Affichage d'un message d'erreur
-
-    $layout = new Layout("gui/layout.html" );
-    $vueError = new ViewError( $layout, $error, $redirect );
-
-    $vueError->display();
+elseif ('/index.php/paniers' == $uri) {
+    $layout = new Layout("gui/layout.html");
+    $vuePaniers = new ViewPanier($layout);
+    $vuePaniers->display();
 }
 else {
     header('Status: 404 Not Found');
     echo '<html><body><h1>My Page NotFound</h1></body></html>';
 }
-
 ?>
