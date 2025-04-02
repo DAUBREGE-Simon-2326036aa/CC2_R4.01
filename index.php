@@ -13,19 +13,31 @@ include_once 'gui/ViewProduits.php';
 use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier, ViewProduits};
 use control\{Controllers, Presenter};
 
-// initialisation du controller
+/**
+ * Initialise le contrôleur principal
+ * @var Controllers $controller
+ */
 $controller = new Controllers();
 
-// chemin de l'URL demandée au navigateur
+/**
+ * Récupère le chemin de l'URL demandée
+ * @var string $uri
+ */
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// définition d'une session d'une heure
+// Configuration de la session
 ini_set('session.gc_maxlifetime', 3600);
 session_set_cookie_params(3600);
 session_start();
 
-// route la requête en interne
+/**
+ * Routeur principal de l'application
+ * Gère les différentes routes et leurs traitements
+ */
 if ('/' == $uri || '/index.php' == $uri) {
+    /**
+     * Traitement de la soumission du formulaire de connexion
+     */
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nom = $_POST['nom'] ?? '';
         $password = $_POST['password'] ?? '';
@@ -35,6 +47,9 @@ if ('/' == $uri || '/index.php' == $uri) {
             'password' => $password
         ]);
 
+        /**
+         * Appel à l'API d'authentification
+         */
         $ch = curl_init('http://localhost:8080/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/users/auth');
         curl_setopt_array($ch, [
             CURLOPT_POST => true,
@@ -60,11 +75,17 @@ if ('/' == $uri || '/index.php' == $uri) {
         }
     }
 
+    /**
+     * Affichage de la vue d'accueil
+     */
     $layout = new Layout("gui/layout.html");
     $vueAccueil = new ViewAccueil($layout);
     $vueAccueil->display();
 }
 elseif ('/index.php/create' == $uri) {
+    /**
+     * Traitement de la création de compte utilisateur
+     */
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userData = [
             'nom' => $_POST['firstName'],
@@ -72,7 +93,9 @@ elseif ('/index.php/create' == $uri) {
             'password' => $_POST['password']
         ];
 
-        // Appel de l'API
+        /**
+         * Appel à l'API de création d'utilisateur
+         */
         $apiUrl = 'http://localhost:8080/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/users/create';
         $ch = curl_init($apiUrl);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -85,17 +108,19 @@ elseif ('/index.php/create' == $uri) {
         curl_close($ch);
 
         header('Location: /index.php');
-
     }
 
-
-    // Affichage du formulaire de création de compte
+    /**
+     * Affichage du formulaire de création de compte
+     */
     $layout = new Layout("gui/layout.html");
     $vueCreate = new ViewCreate($layout);
     $vueCreate->display();
 }
 elseif ('/index.php/paniers' == $uri) {
-    // Récupération des paniers complets depuis l'API
+    /**
+     * Récupération et affichage des paniers
+     */
     $ch = curl_init('http://localhost:6140/API-Panier-1.0-SNAPSHOT/api/paniers');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($ch);
@@ -112,7 +137,9 @@ elseif ('/index.php/paniers' == $uri) {
     $vuePaniers->display();
 }
 elseif ('/index.php/produits' == $uri) {
-    // Configuration de la requête API
+    /**
+     * Récupération et affichage des produits
+     */
     $ch = curl_init('http://localhost:8080/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/products');
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -135,6 +162,9 @@ elseif ('/index.php/produits' == $uri) {
     $vueProduits->display();
 }
 else {
+    /**
+     * Gestion des routes non trouvées
+     */
     header('Status: 404 Not Found');
     echo '<html><body><h1>My Page NotFound</h1></body></html>';
 }
