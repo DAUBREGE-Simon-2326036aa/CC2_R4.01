@@ -43,5 +43,8 @@ public class PanierApplication extends Application {
             repository.close();
         }
     }
+    
+    // The producer method for ProduitService has been removed to avoid ambiguous dependencies
+    // Since ProduitService is already annotated with @ApplicationScoped, CDI can manage it directly
 }
 

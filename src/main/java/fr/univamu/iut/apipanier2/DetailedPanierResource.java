@@ -1,9 +1,17 @@
 package fr.univamu.iut.apipanier2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.univamu.iut.apipanier2.models.LignePanier;
+import fr.univamu.iut.apipanier2.models.LignePanierDetailed;
 import fr.univamu.iut.apipanier2.models.Panier;
+import fr.univamu.iut.apipanier2.models.Produit;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -28,6 +36,12 @@ public class DetailedPanierResource {
      */
     @Inject
     private PanierService service;
+    
+    /**
+     * Service utilisé pour accéder aux données des produits
+     */
+    @Inject
+    private ProduitService produitService;
 
     /**
      * Constructeur par défaut requis pour CDI
@@ -41,9 +55,10 @@ public class DetailedPanierResource {
      * @param repository Repository pour l'accès aux données
      */
     @Inject
-    public DetailedPanierResource(PanierRepository repository) {
+    public DetailedPanierResource(PanierRepository repository, ProduitService produitService) {
         System.out.println("DetailedPanierResource constructor with repository injection called");
         this.service = new PanierService(repository);
+        this.produitService = produitService;
     }
 
     /**
@@ -94,6 +109,73 @@ public class DetailedPanierResource {
     }
 
     /**
+     * Endpoint permettant de récupérer les lignes d'un panier avec les détails des produits
+     * @param panierId ID du panier
+     * @return Liste des lignes détaillées au format JSON
+     */
+    @GET
+    @Path("/{id}/lignes-detaillees")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLignesDetailedByPanierId(@PathParam("id") int panierId) {
+        List<LignePanier> lignes = service.getLignesByPanierId(panierId);
+        
+        if (lignes != null) {
+            List<LignePanierDetailed> lignesDetaillees = new ArrayList<>();
+            
+            for (LignePanier ligne : lignes) {
+                Produit produit = produitService.getProduitById(ligne.getProduitId());
+                LignePanierDetailed ligneDetaillee = LignePanierDetailed.fromLignePanier(ligne, produit);
+                lignesDetaillees.add(ligneDetaillee);
+            }
+            
+            return Response.ok(convertToJson(lignesDetaillees)).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    
+    /**
+     * Endpoint permettant de récupérer un panier avec tous les détails des produits
+     * @param id ID du panier
+     * @return Panier avec détails au format JSON
+     */
+    @GET
+    @Path("/{id}/complet")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPanierComplet(@PathParam("id") int id) {
+        String panierJson = service.getPanierByIdJSON(id);
+        
+        if (panierJson != null) {
+            Panier panier = null;
+            try (Jsonb jsonb = JsonbBuilder.create()) {
+                panier = jsonb.fromJson(panierJson, Panier.class);
+            } catch (Exception e) {
+                System.err.println("Error deserializing panier: " + e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+            List<LignePanier> lignes = panier.getLignes();
+            List<LignePanierDetailed> lignesDetaillees = new ArrayList<>();
+            
+            if (lignes != null) {
+                for (LignePanier ligne : lignes) {
+                    Produit produit = produitService.getProduitById(ligne.getProduitId());
+                    LignePanierDetailed ligneDetaillee = LignePanierDetailed.fromLignePanier(ligne, produit);
+                    lignesDetaillees.add(ligneDetaillee);
+                }
+                
+                // Remplacer les lignes standards par les lignes détaillées
+                panier.setLignes(null); // Nécessaire pour éviter des erreurs de casting
+            }
+            
+            // Créer un objet personnalisé pour contenir les données
+            PanierComplet panierComplet = new PanierComplet(panier, lignesDetaillees);
+            return Response.ok(convertToJson(panierComplet)).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    /**
      * Endpoint permettant de créer un nouveau panier
      * @param panier Panier à créer
      * @return Réponse avec l'ID du panier créé
@@ -122,6 +204,50 @@ public class DetailedPanierResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response addLignePanier(@PathParam("id") int panierId, LignePanier ligne) {
         ligne.setPanierId(panierId);
+        int id = service.addLignePanier(ligne);
+        if (id > 0) {
+            return Response.status(Response.Status.CREATED).entity(String.valueOf(id)).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    /**
+     * Endpoint permettant d'ajouter un produit directement au panier
+     * @param panierId ID du panier
+     * @param produitId ID du produit
+     * @param requestBody Contenu optionnel avec la quantité
+     * @return Réponse avec l'ID de la ligne créée
+     */
+    @POST
+    @Path("/{id}/ajouter-produit/{produitId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response ajouterProduitAuPanier(
+            @PathParam("id") int panierId,
+            @PathParam("produitId") int produitId,
+            AjouterProduitRequest requestBody) {
+        
+        // Vérifier que le produit existe
+        Produit produit = produitService.getProduitById(produitId);
+        if (produit == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Produit non trouvé avec l'ID: " + produitId)
+                    .build();
+        }
+        
+        // Créer une nouvelle ligne de panier
+        LignePanier ligne = new LignePanier();
+        ligne.setPanierId(panierId);
+        ligne.setProduitId(produitId);
+        ligne.setPrixUnitaire(produit.getPrix());
+        
+        // Utiliser la quantité fournie ou 1 par défaut
+        if (requestBody != null && requestBody.getQuantite() != null) {
+            ligne.setQuantite(requestBody.getQuantite());
+        }
+        
+        // Ajouter la ligne au panier
         int id = service.addLignePanier(ligne);
         if (id > 0) {
             return Response.status(Response.Status.CREATED).entity(String.valueOf(id)).build();
@@ -210,6 +336,59 @@ public class DetailedPanierResource {
             return Response.status(Response.Status.OK).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    /**
+     * Convertit un objet en JSON
+     */
+    private String convertToJson(Object object) {
+        if (object == null) {
+            return null;
+        }
+
+        String result = null;
+        try (Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true))) {
+            result = jsonb.toJson(object);
+        } catch (Exception e) {
+            System.err.println("Error during JSON serialization: " + e.getMessage());
+        }
+        return result;
+    }
+    
+    /**
+     * Classe interne pour représenter un panier complet avec lignes détaillées
+     */
+    private static class PanierComplet {
+        private Panier panier;
+        private List<LignePanierDetailed> lignesDetaillees;
+        
+        public PanierComplet(Panier panier, List<LignePanierDetailed> lignesDetaillees) {
+            this.panier = panier;
+            this.lignesDetaillees = lignesDetaillees;
+        }
+        
+        public Panier getPanier() {
+            return panier;
+        }
+        
+        public List<LignePanierDetailed> getLignesDetaillees() {
+            return lignesDetaillees;
+        }
+    }
+    
+    /**
+     * Classe pour gérer les requêtes d'ajout de produit
+     */
+    public static class AjouterProduitRequest {
+        private java.math.BigDecimal quantite;
+        
+        public java.math.BigDecimal getQuantite() {
+            return quantite;
+        }
+        
+        public void setQuantite(java.math.BigDecimal quantite) {
+            this.quantite = quantite;
         }
     }
 }

@@ -91,6 +91,15 @@ public class PanierService {
     }
 
     /**
+     * Récupère les lignes d'un panier
+     * @param panierId ID du panier
+     * @return Liste des lignes du panier
+     */
+    public List<LignePanier> getLignesByPanierId(int panierId) {
+        return repository.getLignesByPanierId(panierId);
+    }
+
+    /**
      * Crée un nouveau panier
      */
     public int createPanier(Panier panier) {
