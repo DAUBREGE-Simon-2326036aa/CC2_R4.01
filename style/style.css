@@ -40,11 +40,11 @@ body {
     flex-direction: column;
     gap: 30px;
     padding: 0 20px;
+    min-height: 600px;
 }
 
 .content-block {
     position: relative;
-    height: 300px;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -195,3 +195,120 @@ body {
 .logout-btn:hover {
     background-color: #c0392b;
 }
+
+/* Style de base */
+.content-block {
+    position: relative;
+    height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.block-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.block-content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    color: white;
+    text-align: left;
+    padding: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.panier-block.expanded {
+    max-height: 1500px;
+}
+
+.panier-block.expanded .block-bg {
+    opacity: 0.9;
+}
+
+.panier-block.expanded .block-content {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.panier-details {
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    display: none;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.panier-block.expanded .panier-details {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.panier-fruits .block-bg {
+    background-image: url('https://example.com/fruits.jpg');
+}
+
+.panier-legumes .block-bg {
+    background-image: url('https://example.com/legumes.jpg');
+}
+
+.panier-mixte .block-bg {
+    background-image: url('https://example.com/mixte.jpg');
+}
+
+.content-block.panier-block {
+    height: auto;
+    max-height: 300px;
+    transition: max-height 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+.panier-block.expanded {
+    max-height: 2000px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.panier-details {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.panier-fruits {
+    background-image: url('https://images.unsplash.com/photo-1653164751482-f30e4cdb5788?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.panier-légumes {
+    background-image: url('https://images.unsplash.com/photo-1624668430039-0175a0fbf006?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.panier-mixte {
+    background-image: url("https://images.unsplash.com/photo-1635774855717-0aec182f92cc?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+

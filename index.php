@@ -1,9 +1,5 @@
 <?php
 
-// charge et initialise les bibliothèques globales
-include_once 'data/AnnonceSqlAccess.php';
-include_once 'data/UserSqlAccess.php';
-
 include_once 'control/Controllers.php';
 include_once 'control/Presenter.php';
 
@@ -20,7 +16,6 @@ include_once 'gui/ViewPanier.php';
 
 use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier};
 use control\{Controllers, Presenter};
-use data\{AnnonceSqlAccess, UserSqlAccess};
 use service\{AnnoncesChecking, UserChecking, UserCreation};
 
 // initialisation du controller
@@ -47,12 +42,11 @@ session_set_cookie_params(3600);
 session_start();
 
 // route la requête en interne
-if ('/' == $uri || '/index.php' == $uri || '/index.php/logout' == $uri) {
+if ('/' == $uri || '/index.php' == $uri) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nom = $_POST['nom'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Prepare API request
         $data = json_encode([
             'nom' => $nom,
             'password' => $password
@@ -77,7 +71,7 @@ if ('/' == $uri || '/index.php' == $uri || '/index.php/logout' == $uri) {
             $result = json_decode($response, true);
             $result = intval($result);
             if($result === -1){
-                exit('Mauvais login ou mot de passe');
+                header('Location: /index.php');
             }
             $_SESSION['login'] = $result;
         }
@@ -119,8 +113,20 @@ elseif ('/index.php/create' == $uri) {
     $vueCreate->display();
 }
 elseif ('/index.php/paniers' == $uri) {
+    // Récupération des paniers complets depuis l'API
+    $ch = curl_init('http://localhost:6140/API-Panier-1.0-SNAPSHOT/api/paniers');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $paniers = [];
+    if ($httpCode === 200) {
+        $paniers = json_decode($response, true);
+    }
+
     $layout = new Layout("gui/layout.html");
-    $vuePaniers = new ViewPanier($layout);
+    $vuePaniers = new ViewPanier($layout, $paniers);
     $vuePaniers->display();
 }
 else {
