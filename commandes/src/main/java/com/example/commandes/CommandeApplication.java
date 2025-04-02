@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.Application;
 public class CommandeApplication extends Application {
     @Produces
     public CommandeRepositoryInterface openDbConnexion() {
+        CommandeRepositoryMariadb db = null;
         try {
             db = new CommandeRepositoryMariadb(
                     "jdbc:mariadb://mysql-r401-lacombe.alwaysdata.net/archi-logi_commandes",
@@ -19,13 +20,13 @@ public class CommandeApplication extends Application {
                     "test!123");
         }
         catch (Exception e) {
-            System.err.println("Fatal error creating PanierRepository: " + e.getMessage());
+            System.err.println(e.getMessage());
             throw new RuntimeException("Erreur de connexion à la base de donnée: " , e);
         }
         return db;
     }
 
-    public void closeDbConnection(@Disposes ProduitsEtUtilisateursRepositoryInterface userRepo) {
+    public void closeDbConnection(@Disposes CommandeRepositoryInterface userRepo) {
         userRepo.close();
     }
 

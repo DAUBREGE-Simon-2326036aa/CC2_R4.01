@@ -19,4 +19,10 @@ public class Commande {
     public void setTailleCommande(int tailleCommande) {
         this.tailleCommande = tailleCommande;
     }
+
+    public void setIdClient(int idClient) {
+    }
+
+    public void setId(int id) {
+    }
 }
