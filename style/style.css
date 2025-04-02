@@ -41,6 +41,7 @@ body {
     gap: 30px;
     padding: 0 20px;
     min-height: 600px;
+    transition: 0.3s ease;
 }
 
 .content-block {
@@ -48,7 +49,7 @@ body {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    transition: 0.3s ease;
 }
 
 .content-block:hover {
@@ -77,6 +78,7 @@ body {
     text-align: center;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.5);
+    transition: 0.3s ease;
 }
 
 .block-content h2 {
@@ -111,15 +113,15 @@ body {
 }
 
 #paniers .block-bg {
+    background-image: url('https://images.unsplash.com/photo-1690224721448-d7912154f3bf?q=80&w=1979&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+}
+
+#produits .block-bg {
     background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
 }
 
-#reservation .block-bg {
-    background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-}
-
 #commandes .block-bg {
-    background-image: url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
 }
 
 .login-container {
@@ -312,3 +314,82 @@ body {
     background-repeat: no-repeat;
 }
 
+.category-laiterie {
+    background-image: url('https://plus.unsplash.com/premium_photo-1694704423368-6f189f46d4fd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.category-oeufs {
+    background-image: url('https://images.unsplash.com/photo-1590005031487-03c7f56ef7d3?q=80&w=2078&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.category-fruit {
+    background-image: url('https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.category-legume {
+    background-image: url('https://images.unsplash.com/photo-1597362925123-77861d3fbac7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.category-epicerie {
+    background-image: url('https://images.unsplash.com/photo-1516594798947-e65505dbb29d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.category-boisson {
+    background-image: url('https://images.unsplash.com/photo-1594053186687-7788bbcd6ea6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.category-boulangerie {
+    background-image: url('https://plus.unsplash.com/premium_photo-1675788939058-850af470cd36?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.category-block {
+    background-size: cover;
+    background-position: center;
+    margin: 2rem 0;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.category-overlay {
+    min-height: 300px;
+    padding: 2rem;
+    margin: 20px 50px;
+    color: white;
+    border-radius: 20px;
+}
+
+.category-overlay h2{
+    color: white;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.product-card {
+    background: rgba(44, 44, 44, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    opacity: 90%;
+}

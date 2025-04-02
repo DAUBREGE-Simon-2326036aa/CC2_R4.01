@@ -32,12 +32,12 @@ class ViewAccueil extends View
                     </div>
                 </div>
                 
-                <div class="content-block" id="reservation">
+                <div class="content-block" id="produits">
                     <div class="block-bg"></div>
                     <div class="block-content">
-                        <h2>Réserver</h2>
-                        <p>Réservez votre panier pour le retirer au relai de votre choix à la date prévue</p>
-                        <a href="/index.php/reservation" class="btn">Faire une réservation</a>
+                        <h2>Nos produits</h2>
+                        <p>Consulter une sélection de produits frais et locaux issus de la coopérative agricole, mettant en valeur leurs qualités artisanales et leur engagement pour une agriculture durable.</p>
+                        <a href="/index.php/produits" class="btn">Voir nos produits</a>
                     </div>
                 </div>
                 

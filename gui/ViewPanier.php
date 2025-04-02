@@ -38,7 +38,6 @@ class ViewPanier extends View
 
                         <div id="details-' . $panier['id'] . '" class="panier-details">
                             <div class="panier-info-group">
-                                <p><strong>Client :</strong> ' . htmlspecialchars($panier['client']) . '</p>
                                 <p><strong>Statut :</strong> ' .
                     ($panier['status'] === 'e' ? '🟡 En cours' : '🟢 Finalisé') .
                     ($panier['estValide'] ? ' (✅ Validé)' : ' (❌ Non validé)') . '

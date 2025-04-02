@@ -3,35 +3,18 @@
 include_once 'control/Controllers.php';
 include_once 'control/Presenter.php';
 
-include_once 'service/AnnoncesChecking.php';
-include_once 'service/UserChecking.php';
-include_once 'service/UserCreation.php';
-
 include_once 'gui/Layout.php';
-include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewError.php';
 include_once 'gui/ViewCreate.php';
 include_once 'gui/ViewAccueil.php';
 include_once 'gui/ViewPanier.php';
+include_once 'gui/ViewProduits.php';
 
-use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier};
+use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier, ViewProduits};
 use control\{Controllers, Presenter};
-use service\{AnnoncesChecking, UserChecking, UserCreation};
 
 // initialisation du controller
 $controller = new Controllers();
-
-// intialisation du cas d'utilisation service\AnnoncesChecking
-$annoncesCheck = new AnnoncesChecking();
-
-// intialisation du cas d'utilisation service\UserChecking
-$userCheck = new UserChecking();
-
-// intialisation du cas d'utilisation service\UserCreation
-$userCreation = new UserCreation();
-
-// intialisation du presenter avec accès aux données de AnnoncesCheking
-$presenter = new Presenter($annoncesCheck);
 
 // chemin de l'URL demandée au navigateur
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -82,7 +65,6 @@ if ('/' == $uri || '/index.php' == $uri) {
     $vueAccueil->display();
 }
 elseif ('/index.php/create' == $uri) {
-    var_dump($_POST);
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userData = [
             'nom' => $_POST['firstName'],
@@ -128,6 +110,29 @@ elseif ('/index.php/paniers' == $uri) {
     $layout = new Layout("gui/layout.html");
     $vuePaniers = new ViewPanier($layout, $paniers);
     $vuePaniers->display();
+}
+elseif ('/index.php/produits' == $uri) {
+    // Configuration de la requête API
+    $ch = curl_init('http://localhost:8080/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/products');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 3,
+        CURLOPT_HTTPHEADER => ['Accept: application/json']
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    $produits = [];
+    if ($httpCode === 200) {
+        $produits = json_decode($response, true) ?: [];
+    }
+
+    $layout = new Layout("gui/layout.html");
+    $vueProduits = new ViewProduits($layout, $produits);
+    $vueProduits->display();
 }
 else {
     header('Status: 404 Not Found');
