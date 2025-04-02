@@ -1,6 +1,6 @@
 # ApiPanier2
 
-ApiPanier2 est une API REST permettant la gestion de paniers d'achats pour une application e-commerce.
+ApiPanier est une API REST permettant la gestion de paniers d'achats pour une application e-commerce.
 
 ## Description
 
@@ -18,8 +18,6 @@ Cette API permet de gérer des paniers d'achats avec les fonctionnalités suivan
 - Java 22
 - Maven 3.9+
 - Serveur d'application compatible Jakarta EE (GlassFish 7.0+)
-- MariaDB (ou un autre serveur SQL compatible)
-- Accès à l'API de produits (http://localhost:9170/ProduitsEtUtilisateurs-1.0-SNAPSHOT/api/products)
 
 
 ## Structure des données
