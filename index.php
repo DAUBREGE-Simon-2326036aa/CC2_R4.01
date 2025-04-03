@@ -1,23 +1,14 @@
 <?php
 
-include_once 'control/Controllers.php';
-include_once 'control/Presenter.php';
-
 include_once 'gui/Layout.php';
-include_once 'gui/ViewError.php';
 include_once 'gui/ViewCreate.php';
 include_once 'gui/ViewAccueil.php';
 include_once 'gui/ViewPanier.php';
 include_once 'gui/ViewProduits.php';
+include_once 'gui/ViewCommandes.php';
 
-use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier, ViewProduits};
-use control\{Controllers, Presenter};
+use gui\{ViewAccueil, ViewCreate, Layout, ViewPanier, ViewProduits, ViewCommandes};
 
-/**
- * Initialise le contrôleur principal
- * @var Controllers $controller
- */
-$controller = new Controllers();
 
 /**
  * Récupère le chemin de l'URL demandée
@@ -160,6 +151,16 @@ elseif ('/index.php/produits' == $uri) {
     $layout = new Layout("gui/layout.html");
     $vueProduits = new ViewProduits($layout, $produits);
     $vueProduits->display();
+}
+elseif ('/index.php/commandes' == $uri) {
+    /**
+     * Récupération et affichage des commandes
+     */
+
+
+    $layout = new Layout("gui/layout.html");
+    $vueCommandes = new ViewCommandes($layout);
+    $vueCommandes->display();
 }
 else {
     /**
