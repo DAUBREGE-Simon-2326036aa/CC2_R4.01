@@ -154,10 +154,8 @@ elseif ('/index.php/produits' == $uri) {
 }
 elseif ('/index.php/commandes' == $uri) {
     /**
-     * Récupération et affichage des commandes
+     * Affichage des commandes
      */
-
-
     $layout = new Layout("gui/layout.html");
     $vueCommandes = new ViewCommandes($layout);
     $vueCommandes->display();

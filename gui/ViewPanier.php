@@ -113,5 +113,6 @@ class ViewPanier extends View
             </script>';
 
         $this->content = $content;
+
     }
 }
